@@ -1,16 +1,7 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
-
 import React from 'react';
-import CoinStack from 'cryptoTracker/src/components/coins/CoinsStack'
-
-i
 import {NavigationContainer} from '@react-navigation/native'
+import CoinStack from './src/component/coins/CoinsStack'
+
 const App = ()  => {
   return (
     <>

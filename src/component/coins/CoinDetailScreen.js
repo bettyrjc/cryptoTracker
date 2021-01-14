@@ -18,7 +18,10 @@ class CoinDetailScreen extends Component {
             <View>
                 <FlatList
                     data={coins}
-                    renderItem={({ item }) => <Text>{ item.name}</Text>}
+                    renderItem={({ item }) => <View>
+                        <Text>{ item.name}</Text>
+                        <Text>{ item.name}</Text>
+                    </View>}
                 />
             </View>
         )

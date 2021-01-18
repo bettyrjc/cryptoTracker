@@ -1,22 +1,73 @@
-import React, { Component } from 'react'
-import {View, Text, Pressable, StyleSheet} from 'react-native'
+import React, {Component} from 'react'
+import {
+    View, 
+    StyleSheet,
+    ActivityIndicator,
+    FlatList,
+} from 'react-native'
 
-//pressable es un hiperlink
-class CoinScreen extends Component {
-    handlePress = () => {
-        this.props.navigation.navigate('CoinsDetails')
+import Http from '../../libs/http'
+import CoinItem from './CoinsItem'
+import CoinSearch from './CoinSearch'
+
+
+class CoinDetailScreen extends Component {
+    
+    state = {
+        coins: [],
+        allCoins: [],
+        loading: false
     }
+    componentDidMount = async () => {
+        this.getCoins()
+      
+    }
+
+    getCoins = async () => {
+        this.setState({loading:true})
+        const res = await Http.instance.get('https://api.coinlore.net/api/tickers/')
+        this.setState({
+            coins: res.data,
+            allCoins:res.data,
+            loading: false
+        })
+    }
+
+     handlePress = (coin) => {
+        this.props.navigation.navigate('CoinDetail', { coin });
+     }
+    
+    handleSearch = (query) => {
+        const { allCoins } = this.state
+        const coinsFiltered = allCoins.filter((coin) => {
+            return coin.name.toLowerCase().includes(query.toLowerCase()) ||  coin.symbol.toLowerCase().includes(query.toLowerCase())
+        })
+        this.setState({coins: coinsFiltered})
+    }
+
     render() {
+        const { coins, loading } = this.state
         return (
-            <View style={styles.cotainer}>
-                <Text style={styles.title}>Component Screen</Text>
-                <Pressable style={styles.btn} onPress={this.handlePress}>
-                    <Text style={styles.btnText}>Ir a detalles</Text>
-                </Pressable>
+            <View>
+                <CoinSearch
+                    onChange={this.handleSearch}
+                />
+                {
+                    loading ?
+                        <ActivityIndicator
+                            color='#fff'
+                            size='large'
+                        /> : null
+                }
+                <FlatList
+                    data={coins}
+                    renderItem={({ item }) => <CoinItem item={item} onPress={() => this.handlePress(item)}/> }
+                />
             </View>
         )
     }
 }
+
 const styles = StyleSheet.create({
     cotainer: {
         flex: 1,
@@ -37,4 +88,4 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     }
 })
-export default CoinScreen
+export default CoinDetailScreen
